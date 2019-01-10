@@ -1,0 +1,203 @@
+
+<html>
+    <center><h1>Registration Table</h1></center><br><br>
+    <body>
+            <div id="box">
+        <table align='center' cellspacing=2 cellpadding=5 id="data_table" border=1>
+            <tr>
+            <th>Name</th>
+            <th>Phone number</th>
+            <th>Email</th>
+            <th>Date of birth</th>
+            <th>Actions</th>
+            </tr>
+            <tr>
+            <td><input type="text" id="name"></td>
+            <td><input type="text" id="Phone"></td>
+            <td><input type="text" id="email"></td>
+            <td><input type="date" id="dt"></td>
+            <td><input type="button" class="add" onclick="save();" value="Save"><input type="button" class="cancel" onclick="cancel();" value="cancel"></td>
+            </tr>
+            </table>
+  
+    <br>
+    <br>
+    </div>
+    
+       <script>
+           var html="";
+          var storedArray = [];
+          var id=0;
+          var button;
+        function save()
+        {
+        var name = document.getElementById("name").value;
+        var phoneNumber = document.getElementById("Phone").value;
+        var email = document.getElementById("email").value;
+        var dob = document.getElementById("dt").value;
+        var responseFromValidator = validator(name,phoneNumber,email,dob);
+       // console.log(responseFromValidator)
+        if (responseFromValidator)
+        {
+           
+            storedArray.unshift({
+                  "name" : name,
+                  "phoneNumber" : phoneNumber,
+                  "email" : email,
+                   "dob" : dob,
+                  
+            });
+            showData()
+        
+        } 
+        }
+
+        function validator(names,phno,emails,dobs)
+        {
+           
+            var regex = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+            if (names == "")
+            {
+                alert("Please enter your name");
+                return false;
+            }
+           else if (!isNaN(names))
+            {
+                alert("Your Name is Invalid");
+                return false;
+            } 
+            else if (phno == "")
+            {
+                alert("Please enter your Phone number");
+                return false;
+            }
+            else if (phno.length != 10)
+            {
+                alert("Your Phone number is Invalid")
+                return false;
+            }
+            else if (isNaN(phno))
+            {
+                alert("Your Phone number is Invalid");
+                return false;
+            }
+            else if (emails=="")
+            {
+                alert("Please enter your E-mail");
+                return false;
+            }
+            else if (regex.test(emails) == false)
+            {
+                alert("Invalid Email Address");
+                return false;
+            }
+            else if (dobs == "")
+            {
+               alert("Please enter your Date of birth");
+               return false;
+            } 
+            for ( var i=0; i < storedArray.length; i++ ){
+       if(storedArray[i].phoneNumber == phno){
+           alert("MobileNumber Already Regitered")
+           return false;
+    }
+    }
+    for( var i=0; i < storedArray.length; i++ )
+    {
+         if (storedArray[i].email == emails)
+         {
+           alert("email Already Regitered");
+          return false;
+         }
+        }
+            //alert("Your information is successfully validated");
+            return true;
+            
+        }
+       
+    
+        function showData()
+        {
+     html = "<table align='center' cellspacing=2 cellpadding=5 border=1 id='data_table' >";  
+    html+="<tr><th>Name</th><th>Phonenumber</th><th>Email</th><th>dob</th><th>Actions</tr>";   
+    html+='<td><input type="text" id="name"></td>'
+    html+='<td><input type="text" id="Phone"></td>  <td><input type="text" id="email"><td><input type="date" id="dt"></td></td>'
+    html+= '<td><input type="button" class="add" onclick="save();" value="Save"><input type="button" class="cancel" onclick="cancel()" value="cancel"></td>'   
+    for (var index = 0; index < storedArray.length; index++) {
+     html+= "<tr id='tableRow"+index+"'>";
+    html += "<td>"+storedArray[index].name+"</td>";
+    html += "<td>"+storedArray[index].phoneNumber+"</td>";
+    html += "<td>"+storedArray[index].email+"</td>";
+    html += "<td>"+storedArray[index].dob+"</td>";
+    html += "<td><input type='button' id='edit_btn"+index+"' value='Edit' class='edit' onclick='editRow("+index+")'><input type='button' value='Delete' id='delete_btn"+index+"' class='delete' onclick='deleteRow("+index+")'></td>";
+    html += "</tr>";
+    }
+    html+="</table>";
+    document.getElementById("box").innerHTML = html;
+    //document.write(html);
+    }
+
+  function deleteRow(id)
+  {
+     storedArray.splice(id,1);
+     showData();
+  }
+  function editRow(id)
+  {   
+    
+ document.getElementById('edit_btn'+id).style.display = 'none';
+var rows=document.getElementById('tableRow'+id);//.contentEditable = true;
+rows.cells[0].innerHTML="<input type='text' id='tdName' value='"+rows.cells[0].innerHTML+"'>";
+rows.cells[1].innerHTML="<input type='text' id='tdPhno' value='"+rows.cells[1].innerHTML+"'>";
+rows.cells[2].innerHTML="<input type='text' id='tdEmail' value='"+rows.cells[2].innerHTML+"'>";
+rows.cells[3].innerHTML="<input type='date' id='tdDob' value='"+rows.cells[3].innerHTML+"'>";
+button=rows.cells[4].innerHTML="<button id='update' onclick='updateRow("+id+")'>update</button><button id='cancel' onclick='showData()'>Cancel</button>";
+
+  
+  for(var i=0;i<storedArray.length;i++)
+      {
+          if(i!=id)
+          {
+          document.getElementById('edit_btn'+i ).disabled=true;
+          document.getElementById('delete_btn'+i ).disabled=true;
+          }
+      }
+}
+  function updateRow(id)
+  {
+     
+        var name = document.getElementById("tdName").value;
+        var phoneNumber = document.getElementById("tdPhno").value;
+        var email = document.getElementById("tdEmail").value;
+        var dob = document.getElementById("tdDob").value;
+        if(storedArray[id].phoneNumber==phoneNumber||storedArray[id].email==email)
+  {
+       storedArray.splice(id,1);
+  }
+
+       var valid=validator(name,phoneNumber,email,dob);
+        if (valid)
+        {
+           var obj = {
+                  "name" : name,
+                  "phoneNumber" : phoneNumber,
+                  "email" : email,
+                   "dob" : dob,
+            };
+            storedArray.unshift(obj);
+            showData()
+            
+        } 
+    }
+
+  function cancel()
+        {
+            document.getElementById("name").value =  "";
+            document.getElementById("Phone").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("dt").value = "";
+        }
+       
+    </script>
+</body>
+</html>
